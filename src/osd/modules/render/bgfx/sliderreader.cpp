@@ -14,24 +14,20 @@
 
 const slider_reader::string_to_enum slider_reader::TYPE_NAMES[slider_reader::TYPE_COUNT] = {
 	{ "intenum", uint64_t(bgfx_slider::slider_type::SLIDER_INT_ENUM) },
-	{ "float",    uint64_t(bgfx_slider::slider_type::SLIDER_FLOAT) },
-	{ "int",      uint64_t(bgfx_slider::slider_type::SLIDER_INT) },
-	{ "color",    uint64_t(bgfx_slider::slider_type::SLIDER_COLOR) },
-	{ "vec2",     uint64_t(bgfx_slider::slider_type::SLIDER_VEC2) }
+	{ "float",   uint64_t(bgfx_slider::slider_type::SLIDER_FLOAT) },
+	{ "int",     uint64_t(bgfx_slider::slider_type::SLIDER_INT) },
+	{ "color",   uint64_t(bgfx_slider::slider_type::SLIDER_COLOR) },
+	{ "vec2",    uint64_t(bgfx_slider::slider_type::SLIDER_VEC2) }
 };
 
 const slider_reader::string_to_enum slider_reader::SCREEN_NAMES[slider_reader::SCREEN_COUNT] = {
 	{ "none",   uint64_t(bgfx_slider::screen_type::SLIDER_SCREEN_TYPE_NONE) },
-	{ "raster",  uint64_t(bgfx_slider::screen_type::SLIDER_SCREEN_TYPE_RASTER) },
-	{ "vector",    uint64_t(bgfx_slider::screen_type::SLIDER_SCREEN_TYPE_VECTOR) },
-	{ "crt",  uint64_t(bgfx_slider::screen_type::SLIDER_SCREEN_TYPE_VECTOR_OR_RASTER) },
-	{ "vectorraster",  uint64_t(bgfx_slider::screen_type::SLIDER_SCREEN_TYPE_VECTOR_OR_RASTER) },
-	{ "lcd",   uint64_t(bgfx_slider::screen_type::SLIDER_SCREEN_TYPE_LCD) },
-	{ "nonvector",   uint64_t(bgfx_slider::screen_type::SLIDER_SCREEN_TYPE_LCD_OR_RASTER) },
-	{ "lcdraster",   uint64_t(bgfx_slider::screen_type::SLIDER_SCREEN_TYPE_LCD_OR_RASTER) },
-	{ "lcdvector",   uint64_t(bgfx_slider::screen_type::SLIDER_SCREEN_TYPE_LCD_OR_VECTOR) },
-	{ "any",   uint64_t(bgfx_slider::screen_type::SLIDER_SCREEN_TYPE_ANY) },
-	{ "all",   uint64_t(bgfx_slider::screen_type::SLIDER_SCREEN_TYPE_ANY) }
+	{ "raster", uint64_t(bgfx_slider::screen_type::SLIDER_SCREEN_TYPE_RASTER) },
+	{ "vector", uint64_t(bgfx_slider::screen_type::SLIDER_SCREEN_TYPE_VECTOR) },
+	{ "crt",    uint64_t(bgfx_slider::screen_type::SLIDER_SCREEN_TYPE_VECTOR | bgfx_slider::screen_type::SLIDER_SCREEN_TYPE_RASTER) },
+	{ "lcd",    uint64_t(bgfx_slider::screen_type::SLIDER_SCREEN_TYPE_LCD) },
+	{ "svg",    uint64_t(bgfx_slider::screen_type::SLIDER_SCREEN_TYPE_SVG) },
+	{ "any",    uint64_t(bgfx_slider::screen_type::SLIDER_SCREEN_TYPE_ANY) }
 };
 
 std::vector<bgfx_slider*> slider_reader::read_from_value(const Value& value, std::string prefix, chain_manager& chains, uint32_t screen_index)
@@ -45,8 +41,8 @@ std::vector<bgfx_slider*> slider_reader::read_from_value(const Value& value, std
 
 	std::string name = value["name"].GetString();
 	float step = value["step"].GetFloat();
-	bgfx_slider::slider_type type = bgfx_slider::slider_type(get_enum_from_value(value, "type", uint64_t(bgfx_slider::slider_type::SLIDER_FLOAT), TYPE_NAMES, TYPE_COUNT));
-	bgfx_slider::screen_type screen_type = bgfx_slider::screen_type(get_enum_from_value(value, "screen", uint64_t(bgfx_slider::screen_type::SLIDER_SCREEN_TYPE_ANY), SCREEN_NAMES, SCREEN_COUNT));
+	bgfx_slider::slider_type type = bgfx_slider::slider_type(get_enum_from_value(value, "type", uint64_t(bgfx_slider::slider_type::SLIDER_FLOAT), TYPE_NAMES, TYPE_COUNT, true));
+	bgfx_slider::screen_type screen_type = bgfx_slider::screen_type(get_enum_from_value(value, "screen", uint64_t(bgfx_slider::screen_type::SLIDER_SCREEN_TYPE_ANY), SCREEN_NAMES, SCREEN_COUNT, false));
 	std::string format = value["format"].GetString();
 	std::string description = value["text"].GetString();
 

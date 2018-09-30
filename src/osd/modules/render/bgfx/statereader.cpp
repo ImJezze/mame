@@ -11,7 +11,7 @@
 
 #include <math.h>
 
-uint64_t state_reader::get_enum_from_value(const Value& value, std::string name, const uint64_t default_value, const string_to_enum* enums, const int count)
+uint64_t state_reader::get_enum_from_value(const Value& value, std::string name, const uint64_t default_value, const string_to_enum* enums, const int count, bool exact = false)
 {
 	if (value.HasMember(name.c_str()))
 	{
@@ -24,14 +24,34 @@ uint64_t state_reader::get_enum_from_value(const Value& value, std::string name,
 	}
 }
 
-uint64_t state_reader::get_param_from_string(std::string value, const string_to_enum* enums, const int count)
+uint64_t state_reader::get_param_from_string(std::string value, const string_to_enum* enums, const int count, bool exact = false)
 {
+	uint64_t param = 0;
+	bool found = false;
+
 	for (int i = 0; i < count; i++)
 	{
-		if (value == enums[i].m_string)
+		if (exact)
 		{
-			return enums[i].m_enum;
+			if (value == enums[i].m_string)
+			{
+				found = true;
+				param = enums[i].m_enum;
+				break;
+			}
 		}
+		else
+		{
+			if (value.find(enums[i].m_string) != std::string::npos)
+			{
+				found = true;
+				param |= enums[i].m_enum;
+			}
+		}
+	}
+	if (found)
+	{
+		return param;
 	}
 	assert(false);
 	return 0;

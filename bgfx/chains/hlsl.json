@@ -48,9 +48,11 @@
 		// format (required): A C-style formatting string to use when displaying the slider's value.
 		// type: Any standard C-style formatting string (%s, %d, %1.2f, and so on)
 		// 
-		// screen (required): The type of screens for which we should populate this slider [NOT YET IMPLEMENTED]
-		// values: "none", "raster", "vector", "crt", "vectorraster", "lcd", "nonvector", "lcdraster", "lcdvector", "any", "all"
-		// "crt", "nonvector", and "all" are provided as aliases for "vectorraster", "lcdraster", and "any"
+		// screen (required): The type of screens for which we should populate this slider.
+		// values: "none", "raster", "vector", "crt", "lcd", "svg", "any"
+		//         "crt", is alias for "raster", "vector" combination
+		//         "any", is alias for "raster", "vector", "lcd", "svg" combination
+		//         You can combine these value with any delimiter you like, but there is no explicit requirement.
 		// 
 		// strings (optional): A list of strings to use with the "intenum" type, to select from a list of text options instead of simply numbers.
 		// value: An array of 2 or more entries, with one entry per possible slider setting from "min" to "max" inclusive.

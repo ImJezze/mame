@@ -573,17 +573,32 @@ std::vector<ui::menu_item> chain_manager::get_slider_list()
 		std::vector<bgfx_slider*> chain_sliders = chain->sliders();
 		for (bgfx_slider* slider : chain_sliders)
 		{
-			slider_state* core_slider = slider->core_slider();
+			int slider_screen_type = slider->get_screen_type();
+			int screen_type = SCREEN_TYPE_INVALID;
+			const screen_device *screen_device = screen_device_iterator(m_machine.root_device()).byindex(index);
+			if (screen_device != nullptr)
+			{
+				screen_type = screen_device->screen_type();
+			}
 
-			ui::menu_item item;
-			item.text = core_slider->description;
-			item.subtext = "";
-			item.flags = 0;
-			item.ref = core_slider;
-			item.type = ui::menu_item_type::SLIDER;
-			m_selection_sliders.push_back(item);
+			// create slides defined for the machine screen type
+			if ((screen_type == SCREEN_TYPE_VECTOR && (slider_screen_type & bgfx_slider::screen_type::SLIDER_SCREEN_TYPE_VECTOR) == bgfx_slider::screen_type::SLIDER_SCREEN_TYPE_VECTOR) ||
+				(screen_type == SCREEN_TYPE_RASTER && (slider_screen_type & bgfx_slider::screen_type::SLIDER_SCREEN_TYPE_RASTER) == bgfx_slider::screen_type::SLIDER_SCREEN_TYPE_RASTER) ||
+				(screen_type == SCREEN_TYPE_LCD && (slider_screen_type & bgfx_slider::screen_type::SLIDER_SCREEN_TYPE_LCD) == bgfx_slider::screen_type::SLIDER_SCREEN_TYPE_LCD) ||
+				(screen_type == SCREEN_TYPE_SVG && (slider_screen_type & bgfx_slider::screen_type::SLIDER_SCREEN_TYPE_SVG) == bgfx_slider::screen_type::SLIDER_SCREEN_TYPE_SVG))
+			{
+				slider_state* core_slider = slider->core_slider();
 
-			sliders.push_back(item);
+				ui::menu_item item;
+				item.text = core_slider->description;
+				item.subtext = "";
+				item.flags = 0;
+				item.ref = core_slider;
+				item.type = ui::menu_item_type::SLIDER;
+				m_selection_sliders.push_back(item);
+
+				sliders.push_back(item);
+			}
 		}
 
 		if (chain_sliders.size() > 0)

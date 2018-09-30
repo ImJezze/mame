@@ -37,11 +37,9 @@ public:
 		SLIDER_SCREEN_TYPE_NONE = 0,
 		SLIDER_SCREEN_TYPE_RASTER = 1,
 		SLIDER_SCREEN_TYPE_VECTOR = 2,
-		SLIDER_SCREEN_TYPE_VECTOR_OR_RASTER = SLIDER_SCREEN_TYPE_VECTOR | SLIDER_SCREEN_TYPE_RASTER,
 		SLIDER_SCREEN_TYPE_LCD = 4,
-		SLIDER_SCREEN_TYPE_LCD_OR_RASTER = SLIDER_SCREEN_TYPE_LCD | SLIDER_SCREEN_TYPE_RASTER,
-		SLIDER_SCREEN_TYPE_LCD_OR_VECTOR = SLIDER_SCREEN_TYPE_LCD | SLIDER_SCREEN_TYPE_VECTOR,
-		SLIDER_SCREEN_TYPE_ANY = SLIDER_SCREEN_TYPE_RASTER | SLIDER_SCREEN_TYPE_VECTOR | SLIDER_SCREEN_TYPE_LCD
+		SLIDER_SCREEN_TYPE_SVG = 8,
+		SLIDER_SCREEN_TYPE_ANY = SLIDER_SCREEN_TYPE_RASTER | SLIDER_SCREEN_TYPE_VECTOR | SLIDER_SCREEN_TYPE_LCD || SLIDER_SCREEN_TYPE_SVG
 	};
 
 	bgfx_slider(running_machine& machine, std::string name, float min, float def, float max, float step, slider_type type, screen_type screen, std::string format, std::string description, std::vector<std::string>& strings);
@@ -52,6 +50,7 @@ public:
 	// Getters
 	std::string name() const { return m_name; }
 	slider_type type() const { return m_type; }
+	screen_type get_screen_type() const { return m_screen_type; }
 	float value() const { return m_value; }
 	float uniform_value() const { return float(m_value); }
 	slider_state *core_slider() const { return m_slider_state.get(); }

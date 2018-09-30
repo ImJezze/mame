@@ -29,7 +29,7 @@ private:
 
 	static const int TYPE_COUNT = 5;
 	static const string_to_enum TYPE_NAMES[TYPE_COUNT];
-	static const int SCREEN_COUNT = 11;
+	static const int SCREEN_COUNT = 7;
 	static const string_to_enum SCREEN_NAMES[SCREEN_COUNT];
 };
 
