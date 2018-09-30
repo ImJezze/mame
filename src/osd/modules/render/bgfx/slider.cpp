@@ -134,3 +134,12 @@ size_t bgfx_slider::get_size_for_type(slider_type type)
 			return 0;
 	}
 }
+
+bool bgfx_slider::screen_type_equals(screen_type slider_screen_type, screen_type_enum screen_type)
+{
+	return
+		(screen_type == SCREEN_TYPE_VECTOR && (slider_screen_type & bgfx_slider::screen_type::SLIDER_SCREEN_TYPE_VECTOR) == bgfx_slider::screen_type::SLIDER_SCREEN_TYPE_VECTOR) ||
+		(screen_type == SCREEN_TYPE_RASTER && (slider_screen_type & bgfx_slider::screen_type::SLIDER_SCREEN_TYPE_RASTER) == bgfx_slider::screen_type::SLIDER_SCREEN_TYPE_RASTER) ||
+		(screen_type == SCREEN_TYPE_LCD && (slider_screen_type & bgfx_slider::screen_type::SLIDER_SCREEN_TYPE_LCD) == bgfx_slider::screen_type::SLIDER_SCREEN_TYPE_LCD) ||
+		(screen_type == SCREEN_TYPE_SVG && (slider_screen_type & bgfx_slider::screen_type::SLIDER_SCREEN_TYPE_SVG) == bgfx_slider::screen_type::SLIDER_SCREEN_TYPE_SVG);
+}

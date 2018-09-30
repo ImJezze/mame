@@ -336,7 +336,7 @@ void bgfx_chain_entry::put_screen_buffer(render_primitive* prim, bgfx::Transient
 	vertex[5].m_v = v[0];
 }
 
-bool bgfx_chain_entry::skip()
+bool bgfx_chain_entry::skip(uint32_t screen_index)
 {
 	if (m_suppressors.size() == 0)
 	{
@@ -354,14 +354,14 @@ bool bgfx_chain_entry::skip()
 		if (suppressor->combine() == bgfx_suppressor::combine_mode::COMBINE_AND)
 		{
 			and_count++;
-			if (suppressor->suppress())
+			if (suppressor->suppress(screen_index))
 			{
 				and_suppressed++;
 			}
 		}
 		else if (suppressor->combine() == bgfx_suppressor::combine_mode::COMBINE_OR)
 		{
-			or_suppress |= suppressor->suppress();
+			or_suppress |= suppressor->suppress(screen_index);
 		}
 	}
 

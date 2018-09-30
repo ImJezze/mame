@@ -22,6 +22,7 @@ class slider_reader : public state_reader
 {
 public:
 	static std::vector<bgfx_slider*> read_from_value(const Value& value, std::string prefix, chain_manager& chains, uint32_t screen_index);
+	static uint64_t read_screen_type_from_value(const Value& value);
 
 private:
 	static bool get_values(const Value& value, std::string prefix, std::string name, float* values, const int count);

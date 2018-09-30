@@ -42,7 +42,7 @@ public:
 	// Getters
 	std::string name() const { return m_name; }
 	std::vector<bgfx_input_pair*>& inputs() { return m_inputs; }
-	bool skip();
+	bool skip(uint32_t screen_index);
 
 private:
 	void setup_auto_uniforms(render_primitive* prim, texture_manager& textures, uint16_t screen_count, uint16_t screen_width, uint16_t screen_height, float screen_scale_x, float screen_scale_y, float screen_offset_x, float screen_offset_y, uint32_t rotation_type, bool swap_xy, int32_t screen);

@@ -225,8 +225,9 @@
 
 			// disablewhen (optional): An array of conditions that can be used to disable this pass.
 			"disablewhen": [
-				// type (optional): Reserved for future expansion. Currently only "slider" is supported.
-				// value: "slider"
+				// type (optional): The type on which the condition depends
+				// value: "slider": Condition depends on a slider referenced by name
+				//        "screen": Condition depends on the screen type
 				// 
 				// condition (optional): The disabler is active when the named slider is either equal or not equal to the reference value.
 				// values: "equal", "notequal"
@@ -237,16 +238,13 @@
 				// values: "or", "and"
 				// default: "or"
 				// 
-				// name (required): The name of the slider to use for this condition.
+				// name (required if "type" is "slider"): The name of the slider to use for this condition.
 				// value: Any valid ASCII string.
 				// 
 				// value (required): The value against which we are comparing to determine whether this disabler is active.
-				// type: Either a single integer value or an array of integer values corresponding to the size of the slider's type:
-				//       "intenum": Single integer value
-				//       "int": Single integer value
-				//       "float": Single integer value
-				//       "vec2": Array of two integer values
-				//       "color": Array of three integer values
+				// type: if "slider" see corresponding slider "type"
+				//       if "screen" see possible types of "screen" for sliders
+
 				{ "type": "slider", "condition": "equal", "combine": "or", "name": "adjustments", "value": 0 },
 				{ "type": "slider", "condition": "equal", "combine": "or", "name": "ntsc",        "value": 0 }
 			],

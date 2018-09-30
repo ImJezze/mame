@@ -200,7 +200,7 @@ bgfx_chain_entry* chain_entry_reader::read_from_value(const Value& value, std::s
 		const Value& suppressor_array = value["disablewhen"];
 		for (uint32_t i = 0; i < suppressor_array.Size(); i++)
 		{
-			bgfx_suppressor* suppressor = suppressor_reader::read_from_value(suppressor_array[i], prefix, sliders);
+			bgfx_suppressor* suppressor = suppressor_reader::read_from_value(suppressor_array[i], prefix, chains, sliders);
 			if (suppressor == nullptr)
 			{
 				for (bgfx_entry_uniform* uniform : uniforms) delete uniform;

@@ -12,6 +12,7 @@
 #define __DRAWBGFX_SUPPRESSOR_READER__
 
 #include "statereader.h"
+#include "chainmanager.h"
 
 #include <string>
 #include <map>
@@ -22,7 +23,7 @@ class bgfx_slider;
 class suppressor_reader : public state_reader
 {
 public:
-	static bgfx_suppressor* read_from_value(const Value& value, std::string prefix, std::map<std::string, bgfx_slider*>& sliders);
+	static bgfx_suppressor* read_from_value(const Value& value, std::string prefix, chain_manager& chains, std::map<std::string, bgfx_slider*>& sliders);
 
 private:
 	static bool get_values(const Value& value, std::string prefix, std::string name, int* values, const int count);

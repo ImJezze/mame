@@ -41,8 +41,8 @@ protected:
 	static int get_int(const Value& value, const std::string name, int default_value);
 	static std::string get_string(const Value& value, const std::string name, const std::string default_value);
 
-	static uint64_t get_enum_from_value(const Value& value, std::string name, const uint64_t default_value, const string_to_enum* enums, const int count, bool exact = false);
-	static uint64_t get_param_from_string(std::string value, const string_to_enum* enums, const int count, bool exact = false);
+	static uint64_t get_enum_from_value(const Value& value, std::string name, const uint64_t default_value, const string_to_enum* enums, const int count, bool exact = true);
+	static uint64_t get_param_from_string(std::string value, const string_to_enum* enums, const int count, bool exact = true);
 
 protected:
 	static bool READER_CHECK(bool condition, const char* format, ...)

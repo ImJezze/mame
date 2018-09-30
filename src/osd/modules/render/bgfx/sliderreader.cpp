@@ -123,6 +123,11 @@ std::vector<bgfx_slider*> slider_reader::read_from_value(const Value& value, std
 	return sliders;
 }
 
+uint64_t slider_reader::read_screen_type_from_value(const Value& value)
+{
+	return state_reader::get_enum_from_value(value, "screen", uint64_t(bgfx_slider::screen_type::SLIDER_SCREEN_TYPE_ANY), SCREEN_NAMES, SCREEN_COUNT, false);
+}
+
 bool slider_reader::get_values(const Value& value, std::string prefix, std::string name, float* values, const int count)
 {
 	const char* name_str = name.c_str();

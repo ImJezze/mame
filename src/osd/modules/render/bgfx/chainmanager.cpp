@@ -313,7 +313,7 @@ void chain_manager::process_screen_quad(uint32_t view, uint32_t screen, render_p
 	}
 
 	bgfx_chain* chain = screen_chain(screen);
-	chain->process(prim, view, screen, m_textures, window, bgfx_util::get_blend_state(PRIMFLAG_GET_BLENDMODE(prim->flags)));
+	chain->process(prim, view, m_textures, window, bgfx_util::get_blend_state(PRIMFLAG_GET_BLENDMODE(prim->flags)));
 	view += chain->applicable_passes();
 
 	m_textures.add_provider(full_name, nullptr);
@@ -573,8 +573,8 @@ std::vector<ui::menu_item> chain_manager::get_slider_list()
 		std::vector<bgfx_slider*> chain_sliders = chain->sliders();
 		for (bgfx_slider* slider : chain_sliders)
 		{
-			int slider_screen_type = slider->get_screen_type();
-			int screen_type = SCREEN_TYPE_INVALID;
+			bgfx_slider::screen_type slider_screen_type = slider->get_screen_type();
+			screen_type_enum screen_type = SCREEN_TYPE_INVALID;
 			const screen_device *screen_device = screen_device_iterator(m_machine.root_device()).byindex(index);
 			if (screen_device != nullptr)
 			{
@@ -582,10 +582,7 @@ std::vector<ui::menu_item> chain_manager::get_slider_list()
 			}
 
 			// create slides defined for the machine screen type
-			if ((screen_type == SCREEN_TYPE_VECTOR && (slider_screen_type & bgfx_slider::screen_type::SLIDER_SCREEN_TYPE_VECTOR) == bgfx_slider::screen_type::SLIDER_SCREEN_TYPE_VECTOR) ||
-				(screen_type == SCREEN_TYPE_RASTER && (slider_screen_type & bgfx_slider::screen_type::SLIDER_SCREEN_TYPE_RASTER) == bgfx_slider::screen_type::SLIDER_SCREEN_TYPE_RASTER) ||
-				(screen_type == SCREEN_TYPE_LCD && (slider_screen_type & bgfx_slider::screen_type::SLIDER_SCREEN_TYPE_LCD) == bgfx_slider::screen_type::SLIDER_SCREEN_TYPE_LCD) ||
-				(screen_type == SCREEN_TYPE_SVG && (slider_screen_type & bgfx_slider::screen_type::SLIDER_SCREEN_TYPE_SVG) == bgfx_slider::screen_type::SLIDER_SCREEN_TYPE_SVG))
+			if (bgfx_slider::screen_type_equals(slider_screen_type, screen_type))
 			{
 				slider_state* core_slider = slider->core_slider();
 

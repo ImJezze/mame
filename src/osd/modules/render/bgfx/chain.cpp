@@ -72,10 +72,10 @@ void bgfx_chain::repopulate_targets()
 	}
 }
 
-void bgfx_chain::process(render_primitive* prim, int view, int screen, texture_manager& textures, osd_window& window, uint64_t blend)
+void bgfx_chain::process(render_primitive* prim, int view, texture_manager& textures, osd_window& window, uint64_t blend)
 {
 	screen_device_iterator screen_iterator(window.machine().root_device());
-	screen_device* screen_device = screen_iterator.byindex(screen);
+	screen_device* screen_device = screen_iterator.byindex(m_screen_index);
 
 	uint16_t screen_count(window.target()->current_view()->screens().count());
 	uint16_t screen_width(floorf(prim->get_quad_width() + 0.5f));
@@ -104,9 +104,9 @@ void bgfx_chain::process(render_primitive* prim, int view, int screen, texture_m
 	int current_view = view;
 	for (bgfx_chain_entry* entry : m_entries)
 	{
-		if (!entry->skip())
+		if (!entry->skip(m_screen_index))
 		{
-			entry->submit(current_view, prim, textures, screen_count, screen_width, screen_height, screen_scale_x, screen_scale_y, screen_offset_x, screen_offset_y, rotation_type, swap_xy, blend, screen);
+			entry->submit(current_view, prim, textures, screen_count, screen_width, screen_height, screen_scale_x, screen_scale_y, screen_offset_x, screen_offset_y, rotation_type, swap_xy, blend, m_screen_index);
 			current_view++;
 		}
 	}
@@ -130,7 +130,7 @@ uint32_t bgfx_chain::applicable_passes()
 	int applicable_passes = 0;
 	for (bgfx_chain_entry* entry : m_entries)
 	{
-		if (!entry->skip())
+		if (!entry->skip(m_screen_index))
 		{
 			applicable_passes++;
 		}

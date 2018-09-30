@@ -18,6 +18,8 @@
 
 #include "../frontend/mame/ui/sliderchangednotifier.h"
 
+#include "screen.h"
+
 struct slider_state;
 
 class bgfx_slider : public slider_changed_notifier
@@ -55,7 +57,9 @@ public:
 	float uniform_value() const { return float(m_value); }
 	slider_state *core_slider() const { return m_slider_state.get(); }
 	size_t size() const { return get_size_for_type(m_type); }
+
 	static size_t get_size_for_type(slider_type type);
+	static bool screen_type_equals(screen_type slider_screen_type, screen_type_enum screen_type);
 
 	// Setters
 	void import(float val);
