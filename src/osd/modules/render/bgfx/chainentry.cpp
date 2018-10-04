@@ -343,27 +343,36 @@ bool bgfx_chain_entry::skip(uint32_t screen_index)
 		return false;
 	}
 
-	// Group all AND/OR'd results together and OR them together (hack for now)
-	// TODO: Make this a bit more logical
-
-	bool or_suppress = false;
-	int and_count = 0;
-	int and_suppressed = 0;
+	// Conditions follow the Boolean algebra rules ("and" binds stronger than "or")
+	// e.g. (or && and && and) || (or) || (or && and)
+	int index = -1;
+	std::vector<bool> suppressing(0);
 	for (bgfx_suppressor* suppressor : m_suppressors)
 	{
 		if (suppressor->combine() == bgfx_suppressor::combine_mode::COMBINE_AND)
 		{
-			and_count++;
-			if (suppressor->suppress(screen_index))
+			if (suppressing.size() == 0)
 			{
-				and_suppressed++;
+				suppressing.push_back(true);
+				index++;
 			}
+
+			suppressing[index] = suppressing[index] && suppressor->suppress(screen_index);
 		}
 		else if (suppressor->combine() == bgfx_suppressor::combine_mode::COMBINE_OR)
 		{
-			or_suppress |= suppressor->suppress(screen_index);
+			suppressing.push_back(suppressor->suppress(screen_index));
+			index++;
 		}
 	}
 
-	return (and_count != 0 && and_suppressed == and_count) || or_suppress;
+	for (bool suppress : suppressing)
+	{
+		if (suppress)
+		{
+			return true;
+		}
+	}
+
+	return false;
 }

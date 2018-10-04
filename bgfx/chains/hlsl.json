@@ -233,8 +233,8 @@
 				// values: "equal", "notequal"
 				// default: "equal"
 				// 
-				// combine (optional): All "and" conditions are ANDed together, all "or" conditions are OR'd together, then these two
-				//                     values are OR'd together to finally determine whether this pass should run or not.
+				// combine (optional): Conditions follow the Boolean algebra rules ("and" binds stronger than "or")
+				//                     e.g. (or && and && and) || (or) || (or && and)
 				// values: "or", "and"
 				// default: "or"
 				// 
