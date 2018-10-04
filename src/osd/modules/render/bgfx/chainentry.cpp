@@ -177,7 +177,7 @@ void bgfx_chain_entry::setup_targetscale_uniform(int32_t screen) const
 		bgfx_target* output = m_targets.target(screen, m_output);
 		if (output != nullptr)
 		{
-			float values[2] = { float(output->scale()), float(output->scale()) };
+			float values[2] = { float(output->scale_x()), float(output->scale_y()) };
 			target_scale->set(values, sizeof(float) * 2);
 		}
 	}

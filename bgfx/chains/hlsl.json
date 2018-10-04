@@ -159,9 +159,12 @@
 		// doublebuffer (optional): Whether or not this render target will be needed as a source texture. If you don't know what this means, omit it or set it to true.
 		// values: true, false
 		// default: true
-		// 
-		// scale (optional): Multiply the internal size of this render target by this amount. Certain effects benefit from operating at a higher internal resolution. If you're not sure, omit it.
-		// values: Any integer value
+		//
+		// scale (optional): Multiplies the internal size of this render target by this amount.
+		//                   Certain effects can benefit from operating at a higher internal resolution in terms of quality.
+		//                   On the other hand certain effects can benefit from a smaller internal resolution in terms of performance, for example a blur-effect.
+		//                   If you're not sure, omit it.
+		// values: Any positive numeric value greater than 0
 		// default: 1
 		{
 			"name": "ntsc",

@@ -32,10 +32,10 @@ bgfx_target* target_reader::read_from_value(const Value& value, std::string pref
 	uint32_t mode = uint32_t(get_enum_from_value(value, "mode", TARGET_STYLE_NATIVE, STYLE_NAMES, STYLE_COUNT));
 	bool bilinear = get_bool(value, "bilinear", true);
 	bool double_buffer = get_bool(value, "doublebuffer", true);
-	int scale = 1;
+	double scale = 1;
 	if (value.HasMember("scale"))
 	{
-		scale = int(floor(value["scale"].GetDouble() + 0.5));
+		scale = value["scale"].GetDouble();
 	}
 
 	uint16_t width = 0;
@@ -60,7 +60,7 @@ bgfx_target* target_reader::read_from_value(const Value& value, std::string pref
 			break;
 	}
 
-	return chains.targets().create_target(target_name, bgfx::TextureFormat::RGBA8, width, height, mode, double_buffer, bilinear, scale, screen_index);
+	return chains.targets().create_target(target_name, bgfx::TextureFormat::RGBA8, width, height, mode, double_buffer, bilinear, scale, scale, screen_index);
 }
 
 bool target_reader::validate_parameters(const Value& value, std::string prefix)
@@ -71,6 +71,6 @@ bool target_reader::validate_parameters(const Value& value, std::string prefix)
 	if (!READER_CHECK(value["mode"].IsString(), (prefix + "Value 'mode' must be a string (what screens does this apply to?)\n").c_str())) return false;
 	if (!READER_CHECK(!value.HasMember("bilinear") || value["bilinear"].IsBool(), (prefix + "Value 'bilinear' must be a boolean\n").c_str())) return false;
 	if (!READER_CHECK(!value.HasMember("doublebuffer") || value["doublebuffer"].IsBool(), (prefix + "Value 'doublebuffer' must be a boolean\n").c_str())) return false;
-	if (!READER_CHECK(!value.HasMember("scale") || value["scale"].IsNumber(), (prefix + "Value 'scale' must be a numeric value\n").c_str())) return false;
+	if (!READER_CHECK(!value.HasMember("scale") || value["scale"].IsNumber() && value["scale"].GetDouble() > 0.0, (prefix + "Value 'scale' must be a positive numeric value greater than 0\n").c_str())) return false;
 	return true;
 }
