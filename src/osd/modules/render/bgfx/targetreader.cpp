@@ -21,6 +21,11 @@ const target_reader::string_to_enum target_reader::STYLE_NAMES[target_reader::ST
 	{ "custom", TARGET_STYLE_CUSTOM }
 };
 
+const target_reader::string_to_enum target_reader::FORMAT_NAMES[target_reader::FORMAT_COUNT] = {
+	{ "RGBA8",  bgfx::TextureFormat::RGBA8 },
+	{ "RGBA16", bgfx::TextureFormat::RGBA16 }
+};
+
 bgfx_target* target_reader::read_from_value(const Value& value, std::string prefix, chain_manager& chains, uint32_t screen_index)
 {
 	if (!validate_parameters(value, prefix))
@@ -30,6 +35,7 @@ bgfx_target* target_reader::read_from_value(const Value& value, std::string pref
 
 	std::string target_name = value["name"].GetString();
 	uint32_t mode = uint32_t(get_enum_from_value(value, "mode", TARGET_STYLE_NATIVE, STYLE_NAMES, STYLE_COUNT));
+	uint32_t format = uint32_t(get_enum_from_value(value, "format", bgfx::TextureFormat::RGBA8, FORMAT_NAMES, FORMAT_COUNT));
 	bool bilinear = get_bool(value, "bilinear", true);
 	bool double_buffer = get_bool(value, "doublebuffer", true);
 	double scale = 1;
@@ -60,7 +66,9 @@ bgfx_target* target_reader::read_from_value(const Value& value, std::string pref
 			break;
 	}
 
-	return chains.targets().create_target(target_name, bgfx::TextureFormat::RGBA8, width, height, mode, double_buffer, bilinear, scale, scale, screen_index);
+	bgfx::TextureFormat::Enum target_format = static_cast<bgfx::TextureFormat::Enum>(format);
+
+	return chains.targets().create_target(target_name, target_format, width, height, mode, double_buffer, bilinear, scale, scale, screen_index);
 }
 
 bool target_reader::validate_parameters(const Value& value, std::string prefix)
@@ -72,5 +80,6 @@ bool target_reader::validate_parameters(const Value& value, std::string prefix)
 	if (!READER_CHECK(!value.HasMember("bilinear") || value["bilinear"].IsBool(), (prefix + "Value 'bilinear' must be a boolean\n").c_str())) return false;
 	if (!READER_CHECK(!value.HasMember("doublebuffer") || value["doublebuffer"].IsBool(), (prefix + "Value 'doublebuffer' must be a boolean\n").c_str())) return false;
 	if (!READER_CHECK(!value.HasMember("scale") || value["scale"].IsNumber() && value["scale"].GetDouble() > 0.0, (prefix + "Value 'scale' must be a positive numeric value greater than 0\n").c_str())) return false;
+	if (!READER_CHECK(!value.HasMember("name") || value["format"].IsString(), (prefix + "Value 'format' must be a string\n").c_str())) return false;
 	return true;
 }

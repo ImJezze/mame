@@ -28,6 +28,8 @@ private:
 
 	static const int STYLE_COUNT = 3;
 	static const string_to_enum STYLE_NAMES[STYLE_COUNT];
+	static const int FORMAT_COUNT = 2;
+	static const string_to_enum FORMAT_NAMES[FORMAT_COUNT];
 };
 
 #endif // __DRAWBGFX_TARGET_READER__

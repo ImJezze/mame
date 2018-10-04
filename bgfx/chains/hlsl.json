@@ -152,6 +152,12 @@
 		//     "native": Use the size of the displayed screen inside the window that is being displayed (the same size as the window size, for single-screen games with no artwork)
 		//     "custom": Use a custom size.
 		// 
+		// format (optional): Determines the target's texture format.
+		// values:
+		//     "RGBA8": 8-bit for each color channel red, green, blue and alpha
+		//     "RGBA16": 16-bit for each color channel red, green, blue and alpha
+		// default: "RGBA8"
+		// 
 		// bilinear (optional): Whether or not to apply bilinear filtering to this render target.
 		// values: true, false
 		// default: true
