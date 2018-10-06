@@ -11,8 +11,6 @@
 #include "screen.h"
 #include "suppressor.h"
 
-#include "sliderreader.h"
-
 
 //============================================================
 //  base suppressor
@@ -33,48 +31,56 @@ bgfx_suppressor::~bgfx_suppressor()
 //  suppressor depending on sliders
 //============================================================
 
-bgfx_slider_suppressor::bgfx_slider_suppressor(std::vector<bgfx_slider*> sliders, uint32_t condition, combine_mode combine, void* value)
+bgfx_slider_suppressor::bgfx_slider_suppressor(std::vector<bgfx_slider*> sliders, uint32_t condition, combine_mode combine, std::vector<float> values)
 	: bgfx_suppressor(condition, combine)
 	, m_sliders(sliders)
-	, m_value(nullptr)
+	, m_values(values)
 {
-	uint32_t size = sliders[0]->size();
-	m_value = new uint8_t[size];
-	memcpy(m_value, value, size);
 }
 
 bgfx_slider_suppressor::~bgfx_slider_suppressor()
 {
-	delete[] m_value;
 }
 
 bool bgfx_slider_suppressor::suppress(uint32_t screen_index)
 {
-	int32_t count = 1;
-	if (m_sliders[0]->type() == bgfx_slider::slider_type::SLIDER_VEC2)
+	int32_t value_count;
+	switch (m_sliders[0]->type())
 	{
-		count = 2;
-	}
-	else if (m_sliders[0]->type() == bgfx_slider::slider_type::SLIDER_COLOR)
-	{
-		count = 3;
-	}
-
-	float current_values[3];
-	for (int32_t index = 0; index < count; index++)
-	{
-		current_values[index] = m_sliders[index]->value();
+	case bgfx_slider::slider_type::SLIDER_VEC2:
+		value_count = 2;
+		break;
+	case bgfx_slider::slider_type::SLIDER_COLOR:
+		value_count = 3;
+		break;
+	default:
+		value_count = 1;
+		break;
 	}
 
-	switch (m_condition)
+	for (int32_t i = 0; i < value_count; i++)
 	{
-		case CONDITION_NOTEQUAL:
-			return memcmp(m_value, current_values, m_sliders[0]->size()) != 0;
+		// check if any value does not meet the condition
+		switch (m_condition)
+		{
+		case CONDITION_NOT_EQUAL:
+			return !(std::abs(m_sliders[i]->value() - m_values[i]) < 0.00001f);
 		case CONDITION_EQUAL:
-			return memcmp(m_value, current_values, m_sliders[0]->size()) == 0;
+			return !(std::abs(m_sliders[i]->value() - m_values[i]) > 0.00001f);
+		case CONDITION_LESS:
+			return !(m_sliders[i]->value() >= m_values[i]);
+		case CONDITION_LESS_EQUAL:
+			return !(m_sliders[i]->value() > m_values[i]);
+		case CONDITION_GREATER:
+			return !(m_sliders[i]->value() <= m_values[i]);
+		case CONDITION_GREATER_EQUAL:
+			return !(m_sliders[i]->value() < m_values[i]);
 		default:
 			return false;
+		}
 	}
+
+	return true; // all values meet the condition
 }
 
 
@@ -82,11 +88,11 @@ bool bgfx_slider_suppressor::suppress(uint32_t screen_index)
 //  suppressor depending on screen types
 //============================================================
 
-bgfx_screen_suppressor::bgfx_screen_suppressor(running_machine& machine, uint32_t condition, combine_mode combine, const Value& value)
+bgfx_screen_suppressor::bgfx_screen_suppressor(running_machine& machine, uint32_t condition, combine_mode combine, bgfx_slider::screen_type screen_type)
 	: bgfx_suppressor(condition, combine)
 	, m_machine(machine)
+	, m_screen_type(screen_type)
 {
-	m_screen_type = bgfx_slider::screen_type(slider_reader::read_screen_type_from_value(value));
 }
 
 bgfx_screen_suppressor::~bgfx_screen_suppressor()
@@ -104,7 +110,7 @@ bool bgfx_screen_suppressor::suppress(uint32_t screen_index)
 
 	switch (m_condition)
 	{
-		case CONDITION_NOTEQUAL:
+		case CONDITION_NOT_EQUAL:
 			return !bgfx_slider::screen_type_equals(m_screen_type, screen_type);
 		case CONDITION_EQUAL:
 			return bgfx_slider::screen_type_equals(m_screen_type, screen_type);

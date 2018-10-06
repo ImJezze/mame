@@ -94,11 +94,11 @@
 		{ "type": "float", "name": "scanline_scale",         "text": "Overall Scanline Scale",     "default": 1.00, "max": 4.00, "min": 0.0, "step": 0.01, "format": "%1.2f", "screen": "crt" },
 		{ "type": "float", "name": "scanline_height",        "text": "Individual Scanline Scale",  "default": 1.00, "max": 4.00, "min": 0.0, "step": 0.01, "format": "%1.2f", "screen": "crt" },
 		{ "type": "float", "name": "scanline_variation",     "text": "Scanline Variation",         "default": 1.00, "max": 4.00, "min": 0.0, "step": 0.01, "format": "%1.2f", "screen": "crt" },
- 		{ "type": "float", "name": "scanline_bright_scale",  "text": "Scanline Brightness Scale",  "default": 2.00, "max": 4.00, "min": 0.0, "step": 0.01, "format": "%1.2f", "screen": "crt" },
+		{ "type": "float", "name": "scanline_bright_scale",  "text": "Scanline Brightness Scale",  "default": 2.00, "max": 4.00, "min": 0.0, "step": 0.01, "format": "%1.2f", "screen": "crt" },
 		{ "type": "float", "name": "scanline_bright_offset", "text": "Scanline Brightness Offset", "default": 1.50, "max": 4.00, "min": 0.0, "step": 0.01, "format": "%1.2f", "screen": "crt" },
 		{ "type": "float", "name": "scanline_jitter_amount", "text": "Scanline Jitter Amount",     "default": 0.00, "max": 4.00, "min": 0.0, "step": 0.01, "format": "%1.2f", "screen": "crt" },
 		{ "type": "float", "name": "scanline_variation",     "text": "Scanline Variation",         "default": 1.00, "max": 4.00, "min": 0.0, "step": 0.01, "format": "%1.2f", "screen": "crt" },
- 
+
 		{ "type": "intenum", "name": "shadow_tile_mode", "text": "Shadow Mask Tile Mode",    "default":  0,               "max": 1,                "min": 0,                "step": 1,     "format": "%s",    "screen": "any", "strings": [ "Screen", "Source" ] },
 		{ "type": "float",   "name": "shadow_alpha",     "text": "Shadow Mask Amount",       "default": 0.50,             "max": 1.00,             "min": 0.00,             "step": 0.01,  "format": "%1.2f", "screen": "crt" },
 		{ "type": "vec2",    "name": "shadow_uv_count",  "text": "Shadow Mask Pixel Count ", "default": [ 12, 12 ],       "max": [ 128, 128 ],     "min": [ 1, 1 ],         "step": 1,     "format": "%3f",   "screen": "crt" },
@@ -239,7 +239,8 @@
 				//        "screen": Condition depends on the screen type
 				// 
 				// condition (optional): The disabler is active when the named slider is either equal or not equal to the reference value.
-				// values: "equal", "notequal"
+				// values: "equal", "notequal",
+				//         "less", "lessequal", "greater", "greaterequal" (only if "type" is "slider")
 				// default: "equal"
 				// 
 				// combine (optional): Conditions follow the Boolean algebra rules ("and" binds stronger than "or")
@@ -251,7 +252,7 @@
 				// value: Any valid ASCII string.
 				// 
 				// value (required): The value against which we are comparing to determine whether this disabler is active.
-				// type: if "slider" see corresponding slider "type"
+				// type: if "slider" see corresponding slider "type" (single numeric value or array of numeric values)
 				//       if "screen" see possible types of "screen" for sliders
 
 				{ "type": "slider", "condition": "equal", "combine": "or", "name": "adjustments", "value": 0 },
@@ -368,7 +369,7 @@
 			],
 			"output": "guest"
 		},
- 		{	"effect": "hlsl/prescale",
+		{	"effect": "hlsl/prescale",
 			"name": "Prescale",
 			"input": [
 				{ "sampler": "s_tex", "target": "guest" }
@@ -379,7 +380,7 @@
 			"name": "Deconvergence",
 			"disablewhen": [
 				{ "type": "slider", "condition": "equal", "combine": "or",  "name": "adjustments",           "value": 0 },
-				{ "type": "slider", "condition": "equal", "combine": "and", "name": "converge_red",          "value": [ 0, 0 ] },
+				{ "type": "slider", "condition": "equal", "combine": "or",  "name": "converge_red",          "value": [ 0, 0 ] },
 				{ "type": "slider", "condition": "equal", "combine": "and", "name": "converge_green",        "value": [ 0, 0 ] },
 				{ "type": "slider", "condition": "equal", "combine": "and", "name": "converge_blue",         "value": [ 0, 0 ] },
 				{ "type": "slider", "condition": "equal", "combine": "and", "name": "radial_converge_red",   "value": [ 0, 0 ] },
@@ -449,7 +450,7 @@
 			"name": "Non-Bloom Post Pass",
 			"disablewhen": [
 				{ "type": "slider", "condition": "equal", "combine": "or",  "name": "adjustments",    "value": 0 },
-				{ "type": "slider", "condition": "equal", "combine": "and", "name": "scanline_alpha", "value": 0.0 },
+				{ "type": "slider", "condition": "equal", "combine": "or",  "name": "scanline_alpha", "value": 0.0 },
 				{ "type": "slider", "condition": "equal", "combine": "and", "name": "shadow_alpha",   "value": 0.0 },
 				{ "type": "slider", "condition": "equal", "combine": "and", "name": "humbar_alpha",   "value": 0.0 },
 				{ "type": "slider", "condition": "equal", "combine": "and", "name": "floor",          "value": [ 0, 0, 0 ] },
@@ -485,7 +486,7 @@
 			"name": "Distortion Pass",
 			"disablewhen": [
 				{ "type": "slider", "condition": "equal", "combine": "or",  "name": "adjustments",      "value": 0 },
-				{ "type": "slider", "condition": "equal", "combine": "and", "name": "distortion",       "value": 0.0 },
+				{ "type": "slider", "condition": "equal", "combine": "or",  "name": "distortion",       "value": 0.0 },
 				{ "type": "slider", "condition": "equal", "combine": "and", "name": "cubic_distortion", "value": 0.0 },
 				{ "type": "slider", "condition": "equal", "combine": "and", "name": "distort_corner",   "value": 0.0 },
 				{ "type": "slider", "condition": "equal", "combine": "and", "name": "round_corner",     "value": 0.0 },

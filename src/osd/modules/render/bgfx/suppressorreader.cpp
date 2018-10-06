@@ -13,10 +13,15 @@
 
 #include "suppressor.h"
 #include "slider.h"
+#include "sliderreader.h"
 
 const suppressor_reader::string_to_enum suppressor_reader::CONDITION_NAMES[suppressor_reader::CONDITION_COUNT] = {
-	{ "equal",      bgfx_suppressor::condition_type::CONDITION_EQUAL },
-	{ "notequal",   bgfx_suppressor::condition_type::CONDITION_NOTEQUAL }
+	{ "equal",        bgfx_suppressor::condition_type::CONDITION_EQUAL },
+	{ "notequal",     bgfx_suppressor::condition_type::CONDITION_NOT_EQUAL },
+	{ "less",         bgfx_suppressor::condition_type::CONDITION_LESS },
+	{ "lessequal",    bgfx_suppressor::condition_type::CONDITION_LESS_EQUAL },
+	{ "greater",      bgfx_suppressor::condition_type::CONDITION_GREATER },
+	{ "greaterequal", bgfx_suppressor::condition_type::CONDITION_GREATER_EQUAL }
 };
 
 const suppressor_reader::string_to_enum suppressor_reader::COMBINE_NAMES[suppressor_reader::COMBINE_COUNT] = {
@@ -44,11 +49,6 @@ bgfx_suppressor* suppressor_reader::read_from_value(const Value& value, std::str
 		int slider_count;
 		switch (check_sliders[0]->type())
 		{
-		case bgfx_slider::slider_type::SLIDER_FLOAT:
-		case bgfx_slider::slider_type::SLIDER_INT:
-		case bgfx_slider::slider_type::SLIDER_INT_ENUM:
-			slider_count = 1;
-			break;
 		case bgfx_slider::slider_type::SLIDER_VEC2:
 			slider_count = 2;
 			break;
@@ -56,11 +56,11 @@ bgfx_suppressor* suppressor_reader::read_from_value(const Value& value, std::str
 			slider_count = 3;
 			break;
 		default:
-			slider_count = 0;
+			slider_count = 1;
 			break;
 		}
 
-		int values[4];
+		std::vector<float> values;
 		if (slider_count > 1)
 		{
 			get_values(value, prefix, "value", values, slider_count);
@@ -72,14 +72,15 @@ bgfx_suppressor* suppressor_reader::read_from_value(const Value& value, std::str
 		}
 		else
 		{
-			values[0] = get_int(value, "value", 0);
+			values.push_back(value["value"].GetFloat());
 		}
 
 		return new bgfx_slider_suppressor(check_sliders, condition, mode, values);
 	}
 	else if (type == "screen")
 	{
-		return new bgfx_screen_suppressor(chains.machine(), condition, mode, value);
+		bgfx_slider::screen_type screen_type = bgfx_slider::screen_type(slider_reader::read_screen_type_from_value(value));
+		return new bgfx_screen_suppressor(chains.machine(), condition, mode, screen_type);
 	}
 
 	return nullptr;
@@ -92,18 +93,18 @@ bool suppressor_reader::validate_parameters(const Value& value, std::string pref
 	if (!READER_CHECK(std::string(value["type"].GetString()) == "screen" || value.HasMember("name"), (prefix + "Must have string value 'name'\n").c_str())) return false;
 	if (!READER_CHECK(std::string(value["type"].GetString()) == "screen" || value["name"].IsString(), (prefix + "Value 'name' must be a string\n").c_str())) return false;
 	if (!READER_CHECK(value.HasMember("value"), (prefix + "Must have numeric or array value 'value'\n").c_str())) return false;
-	if (!READER_CHECK(value["value"].IsNumber() || value["value"].IsArray(), (prefix + "Value 'value' must be a number or array the size of the corresponding slider type\n").c_str())) return false;
+	if (!READER_CHECK(value["value"].IsNumber() || value["value"].IsArray(), (prefix + "Value 'value' must be a number or an array the size of the corresponding slider type\n").c_str())) return false;
 	return true;
 }
 
-bool suppressor_reader::get_values(const Value& value, std::string prefix, std::string name, int* values, const int count)
+bool suppressor_reader::get_values(const Value& value, std::string prefix, std::string name, std::vector<float>& values, const int count)
 {
 	const char* name_str = name.c_str();
 	const Value& value_array = value[name_str];
 	for (uint32_t i = 0; i < value_array.Size() && i < count; i++)
 	{
-		if (!READER_CHECK(value_array[i].IsInt(), (prefix + "value[" + std::to_string(i) + "] must be an integer\n").c_str())) return false;
-		values[i] = value_array[i].GetInt();
+		if (!READER_CHECK(value_array[i].IsNumber(), (prefix + "Value 'value[" + std::to_string(i) + "]' must be a number\n").c_str())) return false;
+		values.push_back(value_array[i].GetFloat());
 	}
 	return true;
 }

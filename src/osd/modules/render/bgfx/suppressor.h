@@ -34,7 +34,11 @@ public:
 	enum condition_type
 	{
 		CONDITION_EQUAL,
-		CONDITION_NOTEQUAL,
+		CONDITION_NOT_EQUAL,
+		CONDITION_LESS,
+		CONDITION_LESS_EQUAL,
+		CONDITION_GREATER,
+		CONDITION_GREATER_EQUAL,
 
 		CONDITION_COUNT
 	};
@@ -64,7 +68,7 @@ protected:
 class bgfx_slider_suppressor : public bgfx_suppressor
 {
 public:
-	bgfx_slider_suppressor(std::vector<bgfx_slider*> sliders, uint32_t condition, combine_mode combine, void* value);
+	bgfx_slider_suppressor(std::vector<bgfx_slider*> sliders, uint32_t condition, combine_mode combine, std::vector<float> values);
 	~bgfx_slider_suppressor();
 
 	// Getters
@@ -72,7 +76,7 @@ public:
 	
 private:
 	std::vector<bgfx_slider*>   m_sliders;
-	uint8_t*                    m_value;
+	std::vector<float>          m_values;
 };
 
 
@@ -83,7 +87,7 @@ private:
 class bgfx_screen_suppressor : public bgfx_suppressor
 {
 public:
-	bgfx_screen_suppressor(running_machine& machine, uint32_t condition, combine_mode combine, const Value& value);
+	bgfx_screen_suppressor(running_machine& machine, uint32_t condition, combine_mode combine, bgfx_slider::screen_type screen_type);
 	~bgfx_screen_suppressor();
 
 	// Getters
